@@ -19,7 +19,7 @@ class script(object):
 ├⍟ Dᴀᴛᴀʙᴀsᴇ : <a href='https://www.mongodb.com/'>ᴍᴏɴɢᴏ ᴅʙ</a> 
 ├⍟ Bᴏᴛ Sᴇʀᴠᴇʀ : <a href='https://heroku.com/'>ʜᴇʀᴏᴋᴜ</a> 
 ├⍟ Bʀᴀɴᴅ : {BRAND_NAME}
-├⍟ Bᴜɪʟᴅ Sᴛᴀᴛᴜs : RDX v5.0 [ ꜱᴛᴀʙʟᴇ ]
+├⍟ Bᴜɪʟᴅ Sᴛᴀᴛᴜs : Anujith v5.0 [ ꜱᴛᴀʙʟᴇ ]
 ╰───────────────⍟</b>"""
         
     CHANNELS = """
@@ -276,7 +276,7 @@ Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
     
     CAPTION = """<b>🎬 <a href="https://t.me/AlluTvSerials">{file_name}</a></b>
 
-<b>⚜️ 𝗝𝗢𝗜𝗡 𝗥𝗗𝗫 𝗡𝗢𝗪 ⚜️ :</b> <a href="https://t.me/AlluTvSerials">ALLU TV SERIES</a>"""
+<b>⚜️ 𝑨𝒏𝒖𝒋𝒊𝒕𝒉 𝑨𝒍𝒍𝒖 𝑻𝑽 𝑺𝒆𝒓𝒊𝒂𝒍𝒔 ⚜️ :</b> <a href="https://t.me/AlluTvSerials">🔮🍁𝙐𝙥𝙙𝙖𝙩𝙚𝙨 𝘾𝙝𝙖𝙣𝙣𝙚𝙡🍁🔮</a>"""
 
     TMDB_TEMPLATE_TXT = """
 <b>🎬 {title} ({year})</b>
@@ -464,9 +464,9 @@ Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
 
 ⚜️ 28 𝑹𝒖𝒑𝒂𝒚𝒆 👉 28 𝒅𝒂𝒚𝒔 
 
-⚜️ 220 𝑹𝒖𝒑𝒂𝒚𝒆 👉 45 𝒅𝒂𝒚𝒔 
+⚜️ 220 𝑹𝒖𝒑𝒂𝒚𝒆 👉 45 𝒅𝒂𝒚𝒔 Not Available 
 
-⚜️ 339 𝑹𝒖𝒑𝒂𝒚𝒆 👉 60 𝒅𝒂𝒚𝒔</blockquote>
+⚜️ 339 𝑹𝒖𝒑𝒂𝒚𝒆 👉 60 𝒅𝒂𝒚𝒔 Not Available</blockquote>
 
 𝑺𝒆𝒍𝒆𝒄𝒕 𝒀𝒐𝒖𝒓 𝑷𝒂𝒚𝒎𝒆𝒏𝒕 𝑴𝒆𝒕𝒉𝒐𝒅.....
 
@@ -481,7 +481,7 @@ Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
 🪔 𝑪𝒉𝒆𝒄𝒌 𝒀𝒐𝒖𝒓 𝑨𝒄𝒕𝒊𝒗𝒆 𝑷𝒍𝒂𝒏: /myplan
 ‼️ 𝑨𝒇𝒕𝒆𝒓 𝑺𝒆𝒏𝒅𝒊𝒏𝒈 𝑨 𝑺𝒄𝒓𝒆𝒆𝒏𝒔𝒉𝒐𝒕 𝑷𝒍𝒆𝒂𝒔𝒆 𝑮𝒊𝒗𝒆 𝒖𝒔 𝒔𝒐𝒎𝒆 𝑻𝒊𝒎𝒆 𝑻𝒐 𝑨𝒅𝒅 𝒀𝒐𝒖 𝑰𝒏 𝑻𝒉𝒆 𝑷𝒓𝒆𝒎𝒊𝒖𝒎 𝑳𝒊𝒔𝒕.</b>"""    
 
-    SOURCE_TXT = f"""<b>RDX AUTO FILTER SOURCE</b>
+    SOURCE_TXT = f"""<b>ALLUTVSERIALS AUTO FILTER SOURCE</b>
 
 This RDX customization is based on an open-source auto-filter project.
 <a href="{SOURCE_CODE_LINK}">VIEW ORIGINAL SOURCE & LICENSE</a>"""
