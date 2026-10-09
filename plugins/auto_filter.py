@@ -85,12 +85,7 @@ SERIALS_MAPPING = {
 
 # ==========================================
 # VIDEO QUALITY PATTERN
-# QUALITY AUTOMATICALLY DETECTED
 # ==========================================
-
-# Examples: 720p, 576p, 480p, 360p, 280p, 180p
-# Examples are not a fixed list.
-# Other 3- or 4-digit p tags are detected automatically.
 
 QUALITY_PATTERN = r"(?<!\d)(\d{3,4})\s*[pP](?!\w)"
 
@@ -172,7 +167,6 @@ def clean_unknown_name(filename):
         flags=re.IGNORECASE
     )
 
-    # Remove detected quality tags from unknown serial names.
     name = re.sub(
         QUALITY_PATTERN,
         "",
@@ -195,12 +189,10 @@ def clean_unknown_name(filename):
 
 # ==========================================
 # GET SEASON
-# Supports S02E739, S2E739, Season 2
 # ==========================================
 
 def get_season(filename):
 
-    # First priority: S02E739 / S2E739
     match = re.search(
         r"(?<![A-Za-z0-9])S(\d+)\s*E\d+",
         filename,
@@ -210,7 +202,6 @@ def get_season(filename):
     if match:
         return match.group(1).zfill(2)
 
-    # Second priority: Season 02 / Season 2
     match = re.search(
         r"\bSeason[ ._-]*(\d+)\b",
         filename,
@@ -220,7 +211,6 @@ def get_season(filename):
     if match:
         return match.group(1).zfill(2)
 
-    # Third priority: S02 by itself
     match = re.search(
         r"(?<![A-Za-z0-9])S(\d{1,2})(?![A-Za-z0-9])",
         filename,
@@ -240,34 +230,23 @@ def get_season(filename):
 def get_episode(filename):
 
     patterns = [
-        # S02E739
-        # S01E769-E772
-        # S01E769-772
         (
             r"(?<![A-Za-z0-9])S\d+\s*E\s*(\d+)"
             r"(?:\s*-\s*E?\s*(\d+))?"
         ),
-
-        # Season 2 Episode 739
         (
             r"\bSeason\s*\d+\s*"
             r"(?:Episode|Ep|E)\s*(\d+)"
             r"(?:\s*-\s*(\d+))?"
         ),
-
-        # Episode 739 / Episode 769-772
         (
             r"\bEpisode\s*(\d+)"
             r"(?:\s*-\s*(\d+))?"
         ),
-
-        # EP739 / EP 739
         (
             r"\bEP\s*(\d+)"
             r"(?:\s*-\s*(\d+))?"
         ),
-
-        # E739 / E739-E740
         (
             r"(?<![A-Za-z0-9])E\s*(\d+)"
             r"(?:\s*-\s*E?\s*(\d+))?"
@@ -295,12 +274,54 @@ def get_episode(filename):
 
 # ==========================================
 # GET VIDEO QUALITY AUTOMATICALLY
+# QUALITY FIX
 # ==========================================
 
-def get_quality(filename):
+def get_quality(filename, message=None):
 
-    # Find quality tags dynamically from the original filename.
-    # Examples: 576p, 280p, 180p, 720p, 1080p, etc.
+    # 1. Try to get the actual video dimensions.
+    # Works when Telegram provides width and height.
+
+    media = None
+
+    if message:
+        if message.video:
+            media = message.video
+        elif message.document:
+            mime_type = message.document.mime_type or ""
+
+            if mime_type.startswith("video/"):
+                media = message.document
+
+    if media:
+        width = getattr(media, "width", None) or 0
+        height = getattr(media, "height", None) or 0
+
+        if width > 0 and height > 0:
+            resolution = max(width, height)
+
+            if resolution >= 2160:
+                return "2160p"
+            elif resolution >= 1440:
+                return "1440p"
+            elif resolution >= 1080:
+                return "1080p"
+            elif resolution >= 720:
+                return "720p"
+            elif resolution >= 576:
+                return "576p"
+            elif resolution >= 480:
+                return "480p"
+            elif resolution >= 360:
+                return "360p"
+            elif resolution >= 240:
+                return "240p"
+            else:
+                return f"{resolution}p"
+
+    # 2. If dimensions are unavailable, inspect filename.
+    # Automatically detects 720p, 1080p, 480p, 360p,
+    # 280p, 180p, and other three/four-digit p labels.
 
     matches = re.findall(
         QUALITY_PATTERN,
@@ -308,15 +329,11 @@ def get_quality(filename):
         re.IGNORECASE
     )
 
-    # Keep order and remove duplicate qualities.
-    qualities = list(dict.fromkeys(
-        f"{number}p" for number in matches
-    ))
+    if matches:
+        return f"{matches[0]}p"
 
-    if qualities:
-        return ", ".join(qualities)
+    # 3. Alternative quality labels.
 
-    # Alternative quality labels
     normalized = filename.lower()
 
     if re.search(r"(?<!\w)4k(?!\w)", normalized):
@@ -376,13 +393,15 @@ async def auto_post_formatter(client, message):
     try:
         filename = get_file_name(message)
 
-        # File Name — existing mapping logic unchanged
+        # File Name — unchanged
         serial_name = get_clean_serial_name(filename)
 
-        # Extract information from the ORIGINAL filename
+        # Season and Episode — unchanged
         season = get_season(filename)
         episode = get_episode(filename)
-        quality = get_quality(filename)
+
+        # Quality — fixed to use video dimensions first
+        quality = get_quality(filename, message)
 
         caption = (
             f"📁 <b>File Name :</b> {serial_name}\n"
@@ -391,7 +410,7 @@ async def auto_post_formatter(client, message):
             f"🎬 <b>Quality :</b> {quality}"
         )
 
-        # Get File link — existing logic unchanged
+        # Get File link — unchanged
         bot_link = make_start_link(serial_name)
 
         buttons = InlineKeyboardMarkup(
