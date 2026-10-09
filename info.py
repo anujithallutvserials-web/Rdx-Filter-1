@@ -182,8 +182,8 @@ DEENDAYAL_VERIFY_EXPIRE = VERIFY_ACCESS_HOURS  # Backward-compatible setting nam
 VERIFY_TOKEN_MINUTES = int(environ.get('VERIFY_TOKEN_MINUTES', '15'))
 VERIFY_NOTICE_DELETE_SECONDS = int(environ.get('VERIFY_NOTICE_DELETE_SECONDS', '180'))
 VERIFY_TIMEZONE = environ.get('VERIFY_TIMEZONE', 'Asia/Kolkata')
-VERIFY_POSTER = environ.get('VERIFY_POSTER', 'https://graph.org/file/c213a7752d698c28223da-062adb9b9133cc3a88.jpg')
-VERIFIED_POSTER = environ.get('VERIFIED_POSTER', 'https://graph.org/file/7b23c5bd460c2d3c212a0-d68e5116cf1f23d450.jpg')
+VERIFY_POSTER = environ.get('VERIFY_POSTER', 'https://files.catbox.moe/wa48jg.jpg')
+VERIFIED_POSTER = environ.get('VERIFIED_POSTER', 'https://files.catbox.moe/5xnn38.jpg')
 DEENDAYAL_VERIFIED_LOG = int(environ.get('DEENDAYAL_VERIFIED_LOG', '-1003976172346'))  # Log channel id (make sure bot is admin)
 HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', 'https://t.me/How_or_Open_Link')  # How to open tutorial link for verification
 
