@@ -1,4 +1,4 @@
-"""Central, user-facing ALLUTVSERIALS branding.
+"""Central, user-facing Anujith ALLU TV SERIALS branding.
 
 Internal package, class, database, and legacy environment names intentionally
 remain unchanged so existing deployments and indexed data keep working.
@@ -7,8 +7,8 @@ remain unchanged so existing deployments and indexed data keep working.
 from os import environ
 
 
-BRAND_NAME = environ.get("BRAND_NAME", "ALLUTVSERIALS AUTO FILTER")
-BRAND_SHORT_NAME = environ.get("BRAND_SHORT_NAME", "ALLUTVSERIALS")
+BRAND_NAME = environ.get("BRAND_NAME", "Anujith ALLU TV SERIALS")
+BRAND_SHORT_NAME = environ.get("BRAND_SHORT_NAME", "Anujith ALLU TV SERIALS")
 BRAND_TAGLINE = environ.get(
     "BRAND_TAGLINE",
     "SEARCH • STREAM • DOWNLOAD",
