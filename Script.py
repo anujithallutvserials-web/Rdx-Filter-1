@@ -4,7 +4,7 @@ from branding import BRAND_NAME, BRAND_TAGLINE, SOURCE_CODE_LINK
 class script(object):
     START_TXT = f"""<b>⚜️ WELCOME TO {BRAND_NAME} ⚜️</b>\n\n<b>ʜᴇʏ {{}} • {{}}</b>\n\n<b>🎬 Search movies and series\n⚡ Get files instantly\n🍿 Stream or download easily</b>\n\n<blockquote>{BRAND_TAGLINE}\nNeed Premium 👉 /plan</blockquote>"""
 
-    GSTART_TXT = f"""<b>⚜️ {BRAND_NAME} ⚜️\n\nʜᴇʏ {{}},\n\nSend a movie or series name to search the RDX database.\n\n<blockquote>{BRAND_TAGLINE}\nNeed Premium 👉 /plan</blockquote></b>"""
+    GSTART_TXT = f"""<b>⚜️ {BRAND_NAME} ⚜️\n\nʜᴇʏ {{}},\n\nSend a movie or series name to search the Anujith Allu TV Serials database.\n\n<blockquote>{BRAND_TAGLINE}\nNeed Premium 👉 /plan</blockquote></b>"""
     
     HELP_TXT = f"""<b>⚜️ {BRAND_NAME} HELP ⚜️\n\nʜᴇʏ {{}},
     
