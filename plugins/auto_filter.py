@@ -1,215 +1,213 @@
-import os
 import re
-from urllib.parse import quote
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.enums import ParseMode
 
-# --- ചാനൽ ഐഡികൾ (നിങ്ങളുടെ ആവശ്യപ്രകാരം മാറ്റുകയോ info.py-ൽ നിന്ന് എടുക്കുകയോ ചെയ്യാം) ---
-CHANNELS = -1003911112940  # Database Channel
-AUTH_CHANNEL = -1003926879089    # Update Channel
+# ==========================================
+# CHANNEL SETTINGS
+# ==========================================
 
-# --- മുഴുവൻ സീരിയൽ മാപ്പിംഗും ---
-SERIALS_MAPPING = {
-    "kanmashi": "Kanmashi",
-    "karnan": "Karnan",
-    "valyettan": "Valyettan",
-    "pranayavilasam": "Pranayavilasam",
-    "durga": "Durga",
-    "chembarathy": "Chembarathy",
-    "saregamapa": "SaReGaMaPa",
-    "saregamapa_lil_champs": "SaReGaMaPa Lil Champs",
-    "kudumbasametham": "Kudumbasametham",
-    "meghasandhesham": "Meghasandhesham",
-    "seethayanam": "Seethayanam",
-    "krishnagadha": "Krishnagadha",
-    "meghasandesam": "Meghasandesam",
-    "aval_arundhati": "Aval Arundhati",
-    "akale": "Akale",
-    "snehapoorvam_shyama": "Snehapoorvam Shyama",
-    "mangalyam": "Mangalyam",
-    "manathe_kottaram": "Manathe Kottaram",
-    "ashwathi_nakshatram": "Ashwathi Nakshatram",
-    "kudumbashree_sharada": "Kudumbashree Sharada",
-    "bigg_boss": "Bigg Boss",
-    "taste_time": "Taste Time",
-    "sindhu_bhairavi": "Sindhu Bhairavi",
-    "comedy_cooks": "Comedy Cooks",
-    "ivar_vivahitharayal": "Ivar Vivahitharayal",
-    "oru_kochu_swapnam": "Oru Kochu Swapnam",
-    "advocate_anjali": "Advocate Anjali",
-    "kattathe_kilikoodu": "Kattathe Kilikoodu",
-    "ee_puzhayum_kadannu": "Ee Puzhayum Kadannu",
-    "sindoorapottu": "Sindoorapottu",
-    "star_singer": "Star Singer",
-    "teacheramma": "Teacheramma",
-    "mazha_thorum_munpe": "Mazha Thorum Munpe",
-    "pavithram": "Pavithram",
-    "ishtam_mathram": "Ishtam Mathram",
-    "santhwanam": "Santhwanam",
-    "snehakkoottu": "Snehakkoottu",
-    "mounaragam": "Mounaragam",
-    "patharamattu": "Patharamattu",
-    "amma_manassu": "Amma Manassu",
-    "chempaneer_poovu": "Chempaneer Poovu",
-    "dharmma_yoddhavu_garudan": "Dharmma Yoddhavu Garudan",
-    "othiri_othiri_swapnangal": "Othiri Othiri Swapnangal",
-    "ottashikharam": "Ottashikharam",
-    "archana_chechi_llb": "Archana Chechi LLB",
-    "super_kanmani": "Super Kanmani",
-    "marimayam": "Marimayam",
-    "oru_chiri_iru_chiri_bumper_chiri": "Oru Chiri Iru Chiri Bumper Chiri",
-    "the_great_family_challenge": "The Great Family Challenge",
-    "roopavathi": "Roopavathi",
-    "thenmavin_kombath": "Thenmavin Kombath",
-    "punnaram": "Punnaram",
-    "anju_sundarikal": "Anju Sundarikal",
-    "amme_mookambike": "Amme Mookambike",
-    "peythozhiyathe": "Peythozhiyathe",
-    "chattambipparu": "Chattambipparu",
-    "hridayam": "Hridayam",
-    "kanyadaanam": "Kanyadaanam",
-    "swayamavarapanthal": "Swayamavarapanthal",
-    "mangalyam_thanthunanena": "Mangalyam Thanthunanena"
-}
+CHANNELS = [-1003911112940]
 
-# --- ഗെറ്റ് ഫയൽ ലിങ്കുകൾ ---
-GET_FILE_LINKS = [
-    "https://telegram.me/Anujith1_bot?start=getfile-Kanmashi",
-    "https://telegram.me/Anujith1_bot?start=getfile-Karnan",
-    "https://telegram.me/Anujith1_bot?start=getfile-Valyettan",
-    "https://telegram.me/Anujith1_bot?start=getfile-Pranayavilasam",
-    "https://telegram.me/Anujith1_bot?start=getfile-Durga",
-    "https://telegram.me/Anujith1_bot?start=getfile-Chembarathy",
-    "https://telegram.me/Anujith1_bot?start=getfile-SaReGaMaPa",
-    "https://telegram.me/Anujith1_bot?start=getfile-SaReGaMaPa-Lil-Champs",
-    "https://telegram.me/Anujith1_bot?start=getfile-Kudumbasametham",
-    "https://telegram.me/Anujith1_bot?start=getfile-Meghasandhesham",
-    "https://telegram.me/Anujith1_bot?start=getfile-Seethayanam",
-    "https://telegram.me/Anujith1_bot?start=getfile-Krishnagadha",
-    "https://telegram.me/Anujith1_bot?start=getfile-Meghasandesam",
-    "https://telegram.me/Anujith1_bot?start=getfile-Aval-Arundhati",
-    "https://telegram.me/Anujith1_bot?start=getfile-Akale",
-    "https://telegram.me/Anujith1_bot?start=getfile-Snehapoorvam-Shyama",
-    "https://telegram.me/Anujith1_bot?start=getfile-Mangalyam",
-    "https://telegram.me/Anujith1_bot?start=getfile-Manathe-Kottaram",
-    "https://telegram.me/Anujith1_bot?start=getfile-Ashwathi-Nakshatram",
-    "https://telegram.me/Anujith1_bot?start=getfile-Kudumbashree-Sharada",
-    "https://telegram.me/Anujith1_bot?start=getfile-Bigg-Boss",
-    "https://telegram.me/Anujith1_bot?start=getfile-Taste-Time",
-    "https://telegram.me/Anujith1_bot?start=getfile-Sindhu-Bhairavi",
-    "https://telegram.me/Anujith1_bot?start=getfile-Comedy-Cooks",
-    "https://telegram.me/Anujith1_bot?start=getfile-Ivar-Vivahitharayal",
-    "https://telegram.me/Anujith1_bot?start=getfile-Oru-Kochu-Swapnam",
-    "https://telegram.me/Anujith1_bot?start=getfile-Advocate-Anjali",
-    "https://telegram.me/Anujith1_bot?start=getfile-Kattathe-Kilikoodu",
-    "https://telegram.me/Anujith1_bot?start=getfile-Ee-Puzhayum-Kadannu",
-    "https://telegram.me/Anujith1_bot?start=getfile-Sindoorapottu",
-    "https://telegram.me/Anujith1_bot?start=getfile-Star-Singer",
-    "https://telegram.me/Anujith1_bot?start=getfile-Teacheramma",
-    "https://telegram.me/Anujith1_bot?start=getfile-Mazha-Thorum-Munpe",
-    "https://telegram.me/Anujith1_bot?start=getfile-Pavithram",
-    "https://telegram.me/Anujith1_bot?start=getfile-Ishtam-Mathram",
-    "https://telegram.me/Anujith1_bot?start=getfile-Santhwanam",
-    "https://telegram.me/Anujith1_bot?start=getfile-Snehakkoottu",
-    "https://telegram.me/Anujith1_bot?start=getfile-Mounaragam",
-    "https://telegram.me/Anujith1_bot?start=getfile-Patharamattu",
-    "https://telegram.me/Anujith1_bot?start=getfile-Amma-Manassu",
-    "https://telegram.me/Anujith1_bot?start=getfile-Chempaneer-Poovu",
-    "https://telegram.me/Anujith1_bot?start=getfile-Dharmma-Yoddhavu-Garudan",
-    "https://telegram.me/Anujith1_bot?start=getfile-Othiri-Othiri-Swapnangal",
-    "https://telegram.me/Anujith1_bot?start=getfile-Ottashikharam",
-    "https://telegram.me/Anujith1_bot?start=getfile-Archana-Chechi-LLB",
-    "https://telegram.me/Anujith1_bot?start=getfile-Super-Kanmani",
-    "https://telegram.me/Anujith1_bot?start=getfile-Marimayam",
-    "https://telegram.me/Anujith1_bot?start=getfile-Oru-Chiri-Iru-Chiri-Bumper-Chiri",
-    "https://telegram.me/Anujith1_bot?start=getfile-The-Great-Family-Challenge",
-    "https://telegram.me/Anujith1_bot?start=getfile-Roopavathi",
-    "https://telegram.me/Anujith1_bot?start=getfile-Thenmavin-Kombath",
-    "https://telegram.me/Anujith1_bot?start=getfile-Punnaram",
-    "https://telegram.me/Anujith1_bot?start=getfile-Anju-Sundarikal",
-    "https://telegram.me/Anujith1_bot?start=getfile-Amme-Mookambike",
-    "https://telegram.me/Anujith1_bot?start=getfile-Peythozhiyathe",
-    "https://telegram.me/Anujith1_bot?start=getfile-Chattambipparu",
-    "https://telegram.me/Anujith1_bot?start=getfile-Hridayam",
-    "https://telegram.me/Anujith1_bot?start=getfile-Kanyadaanam",
-    "https://telegram.me/Anujith1_bot?start=getfile-Swayamavarapanthal",
-    "https://telegram.me/Anujith1_bot?start=getfile-Mangalyam-Thanthunanena"
-]
+AUTH_CHANNEL = -1003926879089
 
-@Client.on_message(filters.chat(CHANNELS) & (filters.document | filters.video | filters.caption))
-async def auto_post_handler(client: Client, message: Message):
-    file_name = ""
-    if message.document:
-        file_name = message.document.file_name
-    elif message.video:
-        file_name = message.video.file_name or message.caption or "Unknown Video"
-    elif message.caption:
-        file_name = message.caption
+BOT_USERNAME = "Anujith1_bot"
 
-    if not file_name:
-        return
+BANNER_PHOTO = "https://ibb.co/cS5zrTGD"
 
-    file_name_lower = file_name.lower()
-    detected_serial = None
-    matched_key = None
-    
-    for key, serial_name in SERIALS_MAPPING.items():
-        formatted_key = key.replace("_", " ")
-        if formatted_key in file_name_lower or key in file_name_lower:
-            detected_serial = serial_name
-            matched_key = key
-            break
-            
-    if not detected_serial:
-        detected_serial = os.path.splitext(file_name)[0]
 
-    season_match = re.search(r'S(\d+)', file_name, re.IGNORECASE)
-    season = season_match.group(1) if season_match else "01"
-    
-    episode_match = re.findall(r'E(\d+(?:-\d+)?)', file_name, re.IGNORECASE)
-    if not episode_match:
-        episode_match = re.findall(r'(\d+-\d+)', file_name)
-    if not episode_match:
-        episode_match = re.findall(r'Episode[_\s.-]*(\d+(?:-\d+)?)', file_name, re.IGNORECASE)
-    
-    episode = episode_match[0] if episode_match else "1"
+# ==========================================
+# AUTO POST FORMATTER
+# ==========================================
 
-    qualities = re.findall(r'(\d{3,4}p)', file_name, re.IGNORECASE)
-    quality = " - ".join(sorted(list(set(qualities)))) if qualities else "720p"
-
-    caption_text = (
-        "🍁 <b>Anujith Allu TV Serials</b> 🍁\n\n"
-        f"📂 <b>File Name :</b> {detected_serial}\n"
-        f"🎞 <b>Season :</b> {season}\n"
-        f"📌 <b>Episode :</b> {episode}\n"
-        f"🎬 <b>Quality :</b> {quality}"
-    )
-
-    get_file_url = None
-    if matched_key:
-        clean_matched_key = matched_key.replace("_", "").replace("-", "").lower()
-        for link in GET_FILE_LINKS:
-            clean_link = link.replace("-", "").replace("_", "").lower()
-            if clean_matched_key in clean_link:
-                get_file_url = link
-                break
-    
-    if not get_file_url:
-        encoded_title = quote(detected_serial)
-        get_file_url = f"https://telegram.me/Anujith1_bot?start=getfile-{encoded_title}"
-
-    keyboard = [[InlineKeyboardButton("📥 Get File", url=get_file_url)]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    banner_url = "https://ibb.co/cS5zrTGD"
+@Client.on_message(
+    filters.chat(CHANNELS) & (filters.document | filters.video)
+)
+async def auto_post_formatter(client, message):
 
     try:
+        # 1. ORIGINAL FILE NAME
+
+        if message.document:
+            file_name_raw = message.document.file_name or "Media File"
+        elif message.video:
+            file_name_raw = message.video.file_name or "Media File"
+        else:
+            return
+
+        # 2. SEASON DETECTION
+
+        season_match = re.search(
+            r'\b(?:S|Season[ ._-]*)(\d+)\b',
+            file_name_raw,
+            re.IGNORECASE
+        )
+
+        season = (
+            season_match.group(1).zfill(2)
+            if season_match else "01"
+        )
+
+        # 3. EPISODE DETECTION
+        # Supports S01E739, S01E769-E772,
+        # S01E769-772 and Episode 769-772
+
+        episode_match = re.search(
+            r'\bS\d+[ ._-]*E(?:P(?:ISODE)?)?[ ._-]*'
+            r'(\d+)(?:[ ._-]*-[ ._-]*(?:E)?(\d+))?',
+            file_name_raw,
+            re.IGNORECASE
+        )
+
+        if not episode_match:
+            episode_match = re.search(
+                r'\bEpisode[ ._-]*(\d+)'
+                r'(?:[ ._-]*-[ ._-]*(\d+))?',
+                file_name_raw,
+                re.IGNORECASE
+            )
+
+        if not episode_match:
+            episode_match = re.search(
+                r'\bE[ ._-]*(\d+)'
+                r'(?:[ ._-]*-[ ._-]*E?[ ._-]*(\d+))?',
+                file_name_raw,
+                re.IGNORECASE
+            )
+
+        if episode_match:
+            start_episode = episode_match.group(1)
+            end_episode = episode_match.group(2)
+
+            if end_episode:
+                episode_num = f"{start_episode}-{end_episode}"
+            else:
+                episode_num = start_episode
+        else:
+            episode_num = "1"
+
+        # 4. MULTIPLE QUALITY DETECTION
+
+        quality_matches = re.findall(
+            r'(?<!\d)(2160p|1440p|1080p|720p|480p|360p)(?!\w)',
+            file_name_raw,
+            re.IGNORECASE
+        )
+
+        # Duplicate qualities ഒഴിവാക്കുന്നു
+        qualities = list(dict.fromkeys(
+            q.lower() for q in quality_matches
+        ))
+
+        quality = ", ".join(qualities) if qualities else "N/A"
+
+        # 5. CLEAN SERIAL NAME
+
+        clean_name = file_name_raw
+
+        # File extension remove
+        clean_name = re.sub(
+            r'\.(mkv|mp4|avi|mov|webm|m4v)$',
+            '',
+            clean_name,
+            flags=re.IGNORECASE
+        )
+
+        # Remove Season
+        clean_name = re.sub(
+            r'\bSeason[ ._-]*\d+\b',
+            '',
+            clean_name,
+            flags=re.IGNORECASE
+        )
+
+        # Remove S01E739 and episode ranges
+        clean_name = re.sub(
+            r'\bS\d+[ ._-]*E(?:P(?:ISODE)?)?[ ._-]*\d+'
+            r'(?:[ ._-]*-[ ._-]*(?:E)?\d+)?',
+            '',
+            clean_name,
+            flags=re.IGNORECASE
+        )
+
+        # Remove Episode 769-772
+        clean_name = re.sub(
+            r'\bEpisode[ ._-]*\d+'
+            r'(?:[ ._-]*-[ ._-]*\d+)?',
+            '',
+            clean_name,
+            flags=re.IGNORECASE
+        )
+
+        # Remove E739 and E769-E772
+        clean_name = re.sub(
+            r'\bE[ ._-]*\d+'
+            r'(?:[ ._-]*-[ ._-]*E?[ ._-]*\d+)?',
+            '',
+            clean_name,
+            flags=re.IGNORECASE
+        )
+
+        # Remove quality tags
+        clean_name = re.sub(
+            r'(?<!\d)(2160p|1440p|1080p|720p|480p|360p)(?!\w)',
+            '',
+            clean_name,
+            flags=re.IGNORECASE
+        )
+
+        # Clean separators and spaces
+        clean_name = re.sub(r'[._]+', ' ', clean_name)
+        clean_name = re.sub(r'\s+', ' ', clean_name)
+        clean_name = clean_name.strip(' -_.')
+
+        if not clean_name:
+            clean_name = "Malayalam Serial"
+
+        # 6. CAPTION
+        # Labels മാത്രം Bold ആണ്
+
+        caption = (
+            f"📁 <b>File Name :</b> {clean_name}\n"
+            f"🎞️ <b>Season :</b> {season}\n"
+            f"📌 <b>Episode :</b> {episode_num}\n"
+            f"🎬 <b>Quality :</b> {quality}"
+        )
+
+        # 7. GET FILE BUTTON
+
+        formatted_name_for_link = clean_name.replace(" ", "")
+        episode_str = f"E{episode_num}"
+
+        bot_link = (
+            f"https://telegram.me/{BOT_USERNAME}"
+            f"?start=getfile-{formatted_name_for_link}"
+            f"-S{season}{episode_str}"
+        )
+
+        reply_markup = InlineKeyboardMarkup(
+            [[
+                InlineKeyboardButton(
+                    "📥 Get File",
+                    url=bot_link
+                )
+            ]]
+        )
+
+        # 8. SEND PHOTO + CAPTION + BUTTON
+
         await client.send_photo(
             chat_id=AUTH_CHANNEL,
-            photo=banner_url,
-            caption=caption_text,
-            parse_mode="html",
+            photo=BANNER_PHOTO,
+            caption=caption,
+            parse_mode=ParseMode.HTML,
             reply_markup=reply_markup
         )
+
+        print(
+            f"Auto-post successful: {clean_name} "
+            f"- Episode {episode_num} - Quality {quality}"
+        )
+
     except Exception as e:
-        print(f"Error sending to Update Channel: {e}")
+        print(f"Auto-Formatter Error: {e}")
