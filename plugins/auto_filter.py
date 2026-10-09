@@ -4,16 +4,298 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ParseMode
 
 # ==========================================
-# CHANNEL SETTINGS
+# BOT SETTINGS
 # ==========================================
 
 CHANNELS = [-1003911112940]
-
 AUTH_CHANNEL = -1003926879089
 
 BOT_USERNAME = "Anujith1_bot"
-
 BANNER_PHOTO = "https://ibb.co/cS5zrTGD"
+
+
+# ==========================================
+# SERIAL MAPPING
+# ==========================================
+
+SERIALS_MAPPING = {
+    "kanmashi": "Kanmashi",
+    "karnan": "Karnan",
+    "valyettan": "Valyettan",
+    "pranayavilasam": "Pranayavilasam",
+    "durga": "Durga",
+    "chembarathy": "Chembarathy",
+    "saregamapa": "SaReGaMaPa",
+    "saregamapa_lil_champs": "SaReGaMaPa Lil Champs",
+    "kudumbasametham": "Kudumbasametham",
+    "meghasandhesham": "Meghasandhesham",
+    "seethayanam": "Seethayanam",
+    "krishnagadha": "Krishnagadha",
+    "meghasandesam": "Meghasandesam",
+    "aval_arundhati": "Aval Arundhati",
+    "akale": "Akale",
+    "snehapoorvam_shyama": "Snehapoorvam Shyama",
+    "mangalyam": "Mangalyam",
+    "manathe_kottaram": "Manathe Kottaram",
+    "ashwathi_nakshatram": "Ashwathi Nakshatram",
+    "kudumbashree_sharada": "Kudumbashree Sharada",
+    "bigg_boss": "Bigg Boss",
+    "taste_time": "Taste Time",
+    "sindhu_bhairavi": "Sindhu Bhairavi",
+    "comedy_cooks": "Comedy Cooks",
+    "ivar_vivahitharayal": "Ivar Vivahitharayal",
+    "oru_kochu_swapnam": "Oru Kochu Swapnam",
+    "advocate_anjali": "Advocate Anjali",
+    "kattathe_kilikoodu": "Kattathe Kilikoodu",
+    "ee_puzhayum_kadannu": "Ee Puzhayum Kadannu",
+    "sindoorapottu": "Sindoorapottu",
+    "star_singer": "Star Singer",
+    "teacheramma": "Teacheramma",
+    "mazha_thorum_munpe": "Mazha Thorum Munpe",
+    "pavithram": "Pavithram",
+    "ishtam_mathram": "Ishtam Mathram",
+    "santhwanam": "Santhwanam 2",
+    "snehakkoottu": "Snehakkoottu",
+    "mounaragam": "Mounaragam",
+    "patharamattu": "Patharamattu",
+    "amma_manassu": "Amma Manassu",
+    "chempaneer_poovu": "Chempaneer Poovu",
+    "dharmma_yoddhavu_garudan": "Dharmma Yoddhavu Garudan",
+    "othiri_othiri_swapnangal": "Othiri Othiri Swapnangal",
+    "ottashikharam": "Ottashikharam",
+    "archana_chechi_llb": "Archana Chechi LLB",
+    "super_kanmani": "Super Kanmani",
+    "marimayam": "Marimayam",
+    "oru_chiri_iru_chiri_bumper_chiri":
+        "Oru Chiri Iru Chiri Bumper Chiri",
+    "the_great_family_challenge": "The Great Family Challenge",
+    "roopavathi": "Roopavathi",
+    "thenmavin_kombath": "Thenmavin Kombath",
+    "punnaram": "Punnaram",
+    "anju_sundarikal": "Anju Sundarikal",
+    "amme_mookambike": "Amme Mookambike",
+    "peythozhiyathe": "Peythozhiyathe",
+    "chattambipparu": "Chattambipparu",
+    "hridayam": "Hridayam",
+    "kanyadaanam": "Kanyadaanam",
+    "swayamavarapanthal": "Swayamavarapanthal",
+    "mangalyam_thanthunanena": "Mangalyam Thanthunanena",
+}
+
+
+# ==========================================
+# REGEX SETTINGS
+# ==========================================
+
+QUALITY_PATTERN = (
+    r"(?<!\d)(2160p|1440p|1080p|720p|480p|360p)(?!\w)"
+)
+
+
+# ==========================================
+# GET ORIGINAL FILE NAME
+# ==========================================
+
+def get_file_name(message):
+    if message.document:
+        return message.document.file_name or "Media File"
+
+    if message.video:
+        return message.video.file_name or "Media File"
+
+    return "Media File"
+
+
+# ==========================================
+# FIND SERIAL NAME
+# ==========================================
+
+def find_serial_name(filename):
+    normalized = re.sub(r"[._-]+", " ", filename.lower())
+    normalized = re.sub(r"\s+", " ", normalized).strip()
+
+    # Longest names first
+    mapping_items = sorted(
+        SERIALS_MAPPING.items(),
+        key=lambda item: len(item[0]),
+        reverse=True
+    )
+
+    for key, display_name in mapping_items:
+        search_name = key.replace("_", " ").lower()
+
+        pattern = (
+            r"(?<!\w)"
+            + re.escape(search_name)
+            + r"(?!\w)"
+        )
+
+        if re.search(pattern, normalized):
+            return display_name
+
+    return clean_unknown_name(filename)
+
+
+# ==========================================
+# CLEAN UNKNOWN SERIAL NAME
+# ==========================================
+
+def clean_unknown_name(filename):
+    name = re.sub(
+        r"\.(mkv|mp4|avi|mov|webm|m4v|mpeg|mpg)$",
+        "",
+        filename,
+        flags=re.IGNORECASE
+    )
+
+    name = re.sub(
+        r"\bS\d+[ ._-]*E(?:P(?:ISODE)?)?[ ._-]*\d+"
+        r"(?:[ ._-]*-[ ._-]*E?\d+)?",
+        "",
+        name,
+        flags=re.IGNORECASE
+    )
+
+    name = re.sub(
+        r"\bSeason[ ._-]*\d+\b",
+        "",
+        name,
+        flags=re.IGNORECASE
+    )
+
+    name = re.sub(
+        r"\bEpisode[ ._-]*\d+(?:[ ._-]*-[ ._-]*\d+)?",
+        "",
+        name,
+        flags=re.IGNORECASE
+    )
+
+    name = re.sub(
+        QUALITY_PATTERN,
+        "",
+        name,
+        flags=re.IGNORECASE
+    )
+
+    name = re.sub(
+        r"\b(HS|WEB|WEB-DL|HDRIP|HDTV|X264|X265)\b",
+        "",
+        name,
+        flags=re.IGNORECASE
+    )
+
+    name = re.sub(r"[._]+", " ", name)
+    name = re.sub(r"\s+", " ", name)
+
+    return name.strip(" -_.") or "Malayalam Serial"
+
+
+# ==========================================
+# GET SEASON
+# ==========================================
+
+def get_season(filename):
+    match = re.search(
+        r"\bS(?:eason)?[ ._-]*(\d+)",
+        filename,
+        re.IGNORECASE
+    )
+
+    if not match:
+        match = re.search(
+            r"\bSeason[ ._-]*(\d+)",
+            filename,
+            re.IGNORECASE
+        )
+
+    if match:
+        return match.group(1).zfill(2)
+
+    return "01"
+
+
+# ==========================================
+# GET EPISODE NUMBER OR RANGE
+# ==========================================
+
+def get_episode(filename):
+    patterns = [
+        r"\bS\d+[ ._-]*E(?:P(?:ISODE)?)?[ ._-]*"
+        r"(\d+)(?:[ ._-]*-[ ._-]*E?[ ._-]*(\d+))?",
+
+        r"\bEpisode[ ._-]*(\d+)"
+        r"(?:[ ._-]*-[ ._-]*(\d+))?",
+
+        r"\bE[ ._-]*(\d+)"
+        r"(?:[ ._-]*-[ ._-]*E?[ ._-]*(\d+))?",
+    ]
+
+    for pattern in patterns:
+        match = re.search(
+            pattern,
+            filename,
+            re.IGNORECASE
+        )
+
+        if match:
+            start = match.group(1)
+            end = match.group(2)
+
+            if end:
+                return f"{start}-{end}"
+
+            return start
+
+    return "1"
+
+
+# ==========================================
+# GET VIDEO QUALITY
+# ==========================================
+
+def get_quality(filename):
+    matches = re.findall(
+        QUALITY_PATTERN,
+        filename,
+        re.IGNORECASE
+    )
+
+    qualities = list(
+        dict.fromkeys(
+            quality.lower()
+            for quality in matches
+        )
+    )
+
+    return ", ".join(qualities) if qualities else "N/A"
+
+
+# ==========================================
+# GET CLEAN SERIAL NAME
+# ==========================================
+
+def get_clean_serial_name(filename):
+    return find_serial_name(filename)
+
+
+# ==========================================
+# GET FILE LINK
+# SERIAL NAME ONLY — NO SEASON / EPISODE
+# ==========================================
+
+def make_start_link(serial_name):
+    slug = re.sub(
+        r"[^A-Za-z0-9]+",
+        "-",
+        serial_name
+    ).strip("-")
+
+    payload = f"getfile-{slug}"
+
+    return (
+        f"https://telegram.me/{BOT_USERNAME}"
+        f"?start={payload}"
+    )
 
 
 # ==========================================
@@ -21,193 +303,54 @@ BANNER_PHOTO = "https://ibb.co/cS5zrTGD"
 # ==========================================
 
 @Client.on_message(
-    filters.chat(CHANNELS) & (filters.document | filters.video)
+    filters.chat(CHANNELS)
+    & (filters.document | filters.video)
 )
 async def auto_post_formatter(client, message):
 
     try:
-        # 1. ORIGINAL FILE NAME
+        filename = get_file_name(message)
 
-        if message.document:
-            file_name_raw = message.document.file_name or "Media File"
-        elif message.video:
-            file_name_raw = message.video.file_name or "Media File"
-        else:
-            return
-
-        # 2. SEASON DETECTION
-
-        season_match = re.search(
-            r'\b(?:S|Season[ ._-]*)(\d+)\b',
-            file_name_raw,
-            re.IGNORECASE
-        )
-
-        season = (
-            season_match.group(1).zfill(2)
-            if season_match else "01"
-        )
-
-        # 3. EPISODE DETECTION
-        # Supports S01E739, S01E769-E772,
-        # S01E769-772 and Episode 769-772
-
-        episode_match = re.search(
-            r'\bS\d+[ ._-]*E(?:P(?:ISODE)?)?[ ._-]*'
-            r'(\d+)(?:[ ._-]*-[ ._-]*(?:E)?(\d+))?',
-            file_name_raw,
-            re.IGNORECASE
-        )
-
-        if not episode_match:
-            episode_match = re.search(
-                r'\bEpisode[ ._-]*(\d+)'
-                r'(?:[ ._-]*-[ ._-]*(\d+))?',
-                file_name_raw,
-                re.IGNORECASE
-            )
-
-        if not episode_match:
-            episode_match = re.search(
-                r'\bE[ ._-]*(\d+)'
-                r'(?:[ ._-]*-[ ._-]*E?[ ._-]*(\d+))?',
-                file_name_raw,
-                re.IGNORECASE
-            )
-
-        if episode_match:
-            start_episode = episode_match.group(1)
-            end_episode = episode_match.group(2)
-
-            if end_episode:
-                episode_num = f"{start_episode}-{end_episode}"
-            else:
-                episode_num = start_episode
-        else:
-            episode_num = "1"
-
-        # 4. MULTIPLE QUALITY DETECTION
-
-        quality_matches = re.findall(
-            r'(?<!\d)(2160p|1440p|1080p|720p|480p|360p)(?!\w)',
-            file_name_raw,
-            re.IGNORECASE
-        )
-
-        # Duplicate qualities ഒഴിവാക്കുന്നു
-        qualities = list(dict.fromkeys(
-            q.lower() for q in quality_matches
-        ))
-
-        quality = ", ".join(qualities) if qualities else "N/A"
-
-        # 5. CLEAN SERIAL NAME
-
-        clean_name = file_name_raw
-
-        # File extension remove
-        clean_name = re.sub(
-            r'\.(mkv|mp4|avi|mov|webm|m4v)$',
-            '',
-            clean_name,
-            flags=re.IGNORECASE
-        )
-
-        # Remove Season
-        clean_name = re.sub(
-            r'\bSeason[ ._-]*\d+\b',
-            '',
-            clean_name,
-            flags=re.IGNORECASE
-        )
-
-        # Remove S01E739 and episode ranges
-        clean_name = re.sub(
-            r'\bS\d+[ ._-]*E(?:P(?:ISODE)?)?[ ._-]*\d+'
-            r'(?:[ ._-]*-[ ._-]*(?:E)?\d+)?',
-            '',
-            clean_name,
-            flags=re.IGNORECASE
-        )
-
-        # Remove Episode 769-772
-        clean_name = re.sub(
-            r'\bEpisode[ ._-]*\d+'
-            r'(?:[ ._-]*-[ ._-]*\d+)?',
-            '',
-            clean_name,
-            flags=re.IGNORECASE
-        )
-
-        # Remove E739 and E769-E772
-        clean_name = re.sub(
-            r'\bE[ ._-]*\d+'
-            r'(?:[ ._-]*-[ ._-]*E?[ ._-]*\d+)?',
-            '',
-            clean_name,
-            flags=re.IGNORECASE
-        )
-
-        # Remove quality tags
-        clean_name = re.sub(
-            r'(?<!\d)(2160p|1440p|1080p|720p|480p|360p)(?!\w)',
-            '',
-            clean_name,
-            flags=re.IGNORECASE
-        )
-
-        # Clean separators and spaces
-        clean_name = re.sub(r'[._]+', ' ', clean_name)
-        clean_name = re.sub(r'\s+', ' ', clean_name)
-        clean_name = clean_name.strip(' -_.')
-
-        if not clean_name:
-            clean_name = "Malayalam Serial"
-
-        # 6. CAPTION
-        # Labels മാത്രം Bold ആണ്
+        serial_name = get_clean_serial_name(filename)
+        season = get_season(filename)
+        episode = get_episode(filename)
+        quality = get_quality(filename)
 
         caption = (
-            f"📁 <b>File Name :</b> {clean_name}\n"
+            f"📁 <b>File Name :</b> {serial_name}\n"
             f"🎞️ <b>Season :</b> {season}\n"
-            f"📌 <b>Episode :</b> {episode_num}\n"
+            f"📌 <b>Episode :</b> {episode}\n"
             f"🎬 <b>Quality :</b> {quality}"
         )
 
-        # 7. GET FILE BUTTON
+        bot_link = make_start_link(serial_name)
 
-        formatted_name_for_link = clean_name.replace(" ", "")
-        episode_str = f"E{episode_num}"
-
-        bot_link = (
-            f"https://telegram.me/{BOT_USERNAME}"
-            f"?start=getfile-{formatted_name_for_link}"
-            f"-S{season}{episode_str}"
+        buttons = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "📥 Get File",
+                        url=bot_link
+                    )
+                ]
+            ]
         )
-
-        reply_markup = InlineKeyboardMarkup(
-            [[
-                InlineKeyboardButton(
-                    "📥 Get File",
-                    url=bot_link
-                )
-            ]]
-        )
-
-        # 8. SEND PHOTO + CAPTION + BUTTON
 
         await client.send_photo(
             chat_id=AUTH_CHANNEL,
             photo=BANNER_PHOTO,
             caption=caption,
             parse_mode=ParseMode.HTML,
-            reply_markup=reply_markup
+            reply_markup=buttons
         )
 
         print(
-            f"Auto-post successful: {clean_name} "
-            f"- Episode {episode_num} - Quality {quality}"
+            f"Auto-post successful | "
+            f"Name: {serial_name} | "
+            f"Season: {season} | "
+            f"Episode: {episode} | "
+            f"Quality: {quality}"
         )
 
-    except Exception as e:
-        print(f"Auto-Formatter Error: {e}")
+    except Exception as error:
+        print(f"Auto-Formatter Error: {error}")
