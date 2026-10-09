@@ -20,7 +20,7 @@ from info import (
 
 def create_instructions():
     return (
-        "<b>👨‍💻 CREATE YOUR OWN RDX CLONE</b>\n\n"
+        "<b>👨‍💻 CREATE YOUR OWN ALLUTVSERIALS CLONE</b>\n\n"
         "1. Open @BotFather and send <code>/newbot</code>.\n"
         "2. Choose a name and username.\n"
         "3. Copy the HTTP API token.\n"
@@ -61,7 +61,7 @@ async def clone_admin_text():
         else "New clone creation is disabled. Existing clone bots remain online."
     )
     text = (
-        "<b>🤖 RDX CLONE ADMIN</b>\n\n"
+        "<b>🤖 ALLUTVSERIALS CLONE ADMIN</b>\n\n"
         f"<blockquote>System: <b>{state}</b>\n"
         f"Total: {total} • Active: {active} • Offline: {max(0, total-active)}\n"
         f"{note}</blockquote>"
@@ -138,7 +138,7 @@ async def all_clones_command(client, message):
         },
     ).sort("updated_at", -1).limit(50).to_list(length=50)
     lines = [
-        "<b>🤖 RDX CLONE ADMIN</b>",
+        "<b>🤖 ALLUTVSERIALS CLONE ADMIN</b>",
         "",
         f"Total: {total} • Active: {active} • Offline: {max(0, total-active)}",
         "",
