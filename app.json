@@ -1,6 +1,6 @@
 {
-    "name": "RDX Auto Filter",
-    "description": "RDX-branded Telegram auto-filter bot with indexed search, thumbnail-preserving file delivery, streaming and premium access.",
+    "name": "Anujith Auto Filter",
+    "description": "Anujith-branded Telegram auto-filter bot with indexed search, thumbnail-preserving file delivery, streaming and premium access.",
     "stack": "container",
     "keywords": [
       "telegram",
@@ -15,7 +15,7 @@
       "index",
       "inline"
     ],
-    "website": "https://t.me/rdxmovie_hd",
+    "website": "https://t.me/AlluTvSerials",
     "repository": "https://github.com/Deendayal403/Deendayal_dhakad",
     "env": {
         "BOT_TOKEN": {
