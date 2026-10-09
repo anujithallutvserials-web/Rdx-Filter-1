@@ -1,13 +1,14 @@
+import os
 import re
-import asyncio
+from urllib.parse import quote
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
-# ഇവിടെ ചാനൽ ഐഡികൾ നൽകുക
-CHANNELS = [-1003911112940]      # ഫയലുകൾ പരിശോധിക്കേണ്ട ചാനൽ ഐഡി
-AUTH_CHANNEL = -1003926879089   # പോസ്റ്റും ഫോട്ടോയും അയക്കേണ്ട ചാനൽ ഐഡി
+# --- ചാനൽ ഐഡികൾ (നിങ്ങളുടെ ആവശ്യപ്രകാരം മാറ്റുകയോ info.py-ൽ നിന്ന് എടുക്കുകയോ ചെയ്യാം) ---
+CHANNELS = -1003911112940  # Database Channel
+AUTH_CHANNEL = -1003926879089    # Update Channel
 
-# നിങ്ങൾ നൽകിയ സീരിയലുകളുടെ മാപ്പിംഗ് ലിസ്റ്റ്
+# --- മുഴുവൻ സീരിയൽ മാപ്പിംഗും ---
 SERIALS_MAPPING = {
     "kanmashi": "Kanmashi",
     "karnan": "Karnan",
@@ -68,151 +69,147 @@ SERIALS_MAPPING = {
     "hridayam": "Hridayam",
     "kanyadaanam": "Kanyadaanam",
     "swayamavarapanthal": "Swayamavarapanthal",
-    "mangalyam_thanthunanena": "Mangalyam Thanthunanena",
-    "santhwanam 2": "Santhwanam 2"
+    "mangalyam_thanthunanena": "Mangalyam Thanthunanena"
 }
 
-# ഒരുമിച്ച് വരുന്ന ഫയലുകൾ ശേഖരിക്കാൻ (Batch Collection)
-batch_storage = {}
-batch_timers = {}
+# --- ഗെറ്റ് ഫയൽ ലിങ്കുകൾ ---
+GET_FILE_LINKS = [
+    "https://telegram.me/Anujith1_bot?start=getfile-Kanmashi",
+    "https://telegram.me/Anujith1_bot?start=getfile-Karnan",
+    "https://telegram.me/Anujith1_bot?start=getfile-Valyettan",
+    "https://telegram.me/Anujith1_bot?start=getfile-Pranayavilasam",
+    "https://telegram.me/Anujith1_bot?start=getfile-Durga",
+    "https://telegram.me/Anujith1_bot?start=getfile-Chembarathy",
+    "https://telegram.me/Anujith1_bot?start=getfile-SaReGaMaPa",
+    "https://telegram.me/Anujith1_bot?start=getfile-SaReGaMaPa-Lil-Champs",
+    "https://telegram.me/Anujith1_bot?start=getfile-Kudumbasametham",
+    "https://telegram.me/Anujith1_bot?start=getfile-Meghasandhesham",
+    "https://telegram.me/Anujith1_bot?start=getfile-Seethayanam",
+    "https://telegram.me/Anujith1_bot?start=getfile-Krishnagadha",
+    "https://telegram.me/Anujith1_bot?start=getfile-Meghasandesam",
+    "https://telegram.me/Anujith1_bot?start=getfile-Aval-Arundhati",
+    "https://telegram.me/Anujith1_bot?start=getfile-Akale",
+    "https://telegram.me/Anujith1_bot?start=getfile-Snehapoorvam-Shyama",
+    "https://telegram.me/Anujith1_bot?start=getfile-Mangalyam",
+    "https://telegram.me/Anujith1_bot?start=getfile-Manathe-Kottaram",
+    "https://telegram.me/Anujith1_bot?start=getfile-Ashwathi-Nakshatram",
+    "https://telegram.me/Anujith1_bot?start=getfile-Kudumbashree-Sharada",
+    "https://telegram.me/Anujith1_bot?start=getfile-Bigg-Boss",
+    "https://telegram.me/Anujith1_bot?start=getfile-Taste-Time",
+    "https://telegram.me/Anujith1_bot?start=getfile-Sindhu-Bhairavi",
+    "https://telegram.me/Anujith1_bot?start=getfile-Comedy-Cooks",
+    "https://telegram.me/Anujith1_bot?start=getfile-Ivar-Vivahitharayal",
+    "https://telegram.me/Anujith1_bot?start=getfile-Oru-Kochu-Swapnam",
+    "https://telegram.me/Anujith1_bot?start=getfile-Advocate-Anjali",
+    "https://telegram.me/Anujith1_bot?start=getfile-Kattathe-Kilikoodu",
+    "https://telegram.me/Anujith1_bot?start=getfile-Ee-Puzhayum-Kadannu",
+    "https://telegram.me/Anujith1_bot?start=getfile-Sindoorapottu",
+    "https://telegram.me/Anujith1_bot?start=getfile-Star-Singer",
+    "https://telegram.me/Anujith1_bot?start=getfile-Teacheramma",
+    "https://telegram.me/Anujith1_bot?start=getfile-Mazha-Thorum-Munpe",
+    "https://telegram.me/Anujith1_bot?start=getfile-Pavithram",
+    "https://telegram.me/Anujith1_bot?start=getfile-Ishtam-Mathram",
+    "https://telegram.me/Anujith1_bot?start=getfile-Santhwanam",
+    "https://telegram.me/Anujith1_bot?start=getfile-Snehakkoottu",
+    "https://telegram.me/Anujith1_bot?start=getfile-Mounaragam",
+    "https://telegram.me/Anujith1_bot?start=getfile-Patharamattu",
+    "https://telegram.me/Anujith1_bot?start=getfile-Amma-Manassu",
+    "https://telegram.me/Anujith1_bot?start=getfile-Chempaneer-Poovu",
+    "https://telegram.me/Anujith1_bot?start=getfile-Dharmma-Yoddhavu-Garudan",
+    "https://telegram.me/Anujith1_bot?start=getfile-Othiri-Othiri-Swapnangal",
+    "https://telegram.me/Anujith1_bot?start=getfile-Ottashikharam",
+    "https://telegram.me/Anujith1_bot?start=getfile-Archana-Chechi-LLB",
+    "https://telegram.me/Anujith1_bot?start=getfile-Super-Kanmani",
+    "https://telegram.me/Anujith1_bot?start=getfile-Marimayam",
+    "https://telegram.me/Anujith1_bot?start=getfile-Oru-Chiri-Iru-Chiri-Bumper-Chiri",
+    "https://telegram.me/Anujith1_bot?start=getfile-The-Great-Family-Challenge",
+    "https://telegram.me/Anujith1_bot?start=getfile-Roopavathi",
+    "https://telegram.me/Anujith1_bot?start=getfile-Thenmavin-Kombath",
+    "https://telegram.me/Anujith1_bot?start=getfile-Punnaram",
+    "https://telegram.me/Anujith1_bot?start=getfile-Anju-Sundarikal",
+    "https://telegram.me/Anujith1_bot?start=getfile-Amme-Mookambike",
+    "https://telegram.me/Anujith1_bot?start=getfile-Peythozhiyathe",
+    "https://telegram.me/Anujith1_bot?start=getfile-Chattambipparu",
+    "https://telegram.me/Anujith1_bot?start=getfile-Hridayam",
+    "https://telegram.me/Anujith1_bot?start=getfile-Kanyadaanam",
+    "https://telegram.me/Anujith1_bot?start=getfile-Swayamavarapanthal",
+    "https://telegram.me/Anujith1_bot?start=getfile-Mangalyam-Thanthunanena"
+]
 
-async def process_batch(client, serial_key):
-    """ഒരു ബാച്ചിലെ മുഴുവൻ ഫയലുകളും പരിശോധിച്ച് മിനിമം, മാക്സിമം എപ്പിസോഡുകൾ കണ്ടെത്തി പോസ്റ്റ് ചെയ്യുന്നു"""
-    await asyncio.sleep(3) # എല്ലാ ഫയലുകളും എത്തുന്നതുവരെ 3 സെക്കൻഡ് കാത്തിരിക്കുന്നു
-    
-    if serial_key not in batch_storage:
+@Client.on_message(filters.chat(CHANNELS) & (filters.document | filters.video | filters.caption))
+async def auto_post_handler(client: Client, message: Message):
+    file_name = ""
+    if message.document:
+        file_name = message.document.file_name
+    elif message.video:
+        file_name = message.video.file_name or message.caption or "Unknown Video"
+    elif message.caption:
+        file_name = message.caption
+
+    if not file_name:
         return
 
-    items = batch_storage.pop(serial_key)
-    if serial_key in batch_timers:
-        del batch_timers[serial_key]
+    file_name_lower = file_name.lower()
+    detected_serial = None
+    matched_key = None
+    
+    for key, serial_name in SERIALS_MAPPING.items():
+        formatted_key = key.replace("_", " ")
+        if formatted_key in file_name_lower or key in file_name_lower:
+            detected_serial = serial_name
+            matched_key = key
+            break
+            
+    if not detected_serial:
+        detected_serial = os.path.splitext(file_name)[0]
 
-    for data in items:
-        file_name_raw = data["file_name"]
-        season = data["season"]
-        quality = data["quality"]
-        clean_name = data["clean_name"]
-        is_from_mapping = data["is_from_mapping"]
-        all_eps = data["all_eps"]
+    season_match = re.search(r'S(\d+)', file_name, re.IGNORECASE)
+    season = season_match.group(1) if season_match else "01"
+    
+    episode_match = re.findall(r'E(\d+(?:-\d+)?)', file_name, re.IGNORECASE)
+    if not episode_match:
+        episode_match = re.findall(r'(\d+-\d+)', file_name)
+    if not episode_match:
+        episode_match = re.findall(r'Episode[_\s.-]*(\d+(?:-\d+)?)', file_name, re.IGNORECASE)
+    
+    episode = episode_match[0] if episode_match else "1"
 
-        # കിട്ടിയ എല്ലാ എപ്പിസോഡുകളിൽ നിന്നും ഏറ്റവും ചെറുതും വലുതും കണ്ടെത്തുന്നു
-        if len(all_eps) > 1:
-            min_ep = min(all_eps)
-            max_ep = max(all_eps)
-            if min_ep != max_ep:
-                episode_str = f"{min_ep}-{max_ep}"
-            else:
-                episode_str = str(min_ep)
-        elif len(all_eps) == 1:
-            episode_str = str(all_eps[0])
-        else:
-            episode_str = "1"
+    qualities = re.findall(r'(\d{3,4}p)', file_name, re.IGNORECASE)
+    quality = " - ".join(sorted(list(set(qualities)))) if qualities else "720p"
 
-        BOT_USERNAME = "Anujith1_bot"
+    caption_text = (
+        "🍁 <b>Anujith Allu TV Serials</b> 🍁\n\n"
+        f"📂 <b>File Name :</b> {detected_serial}\n"
+        f"🎞 <b>Season :</b> {season}\n"
+        f"📌 <b>Episode :</b> {episode}\n"
+        f"🎬 <b>Quality :</b> {quality}"
+    )
 
-        # ലിങ്കുകൾ തയ്യാറാക്കുന്നു
-        if is_from_mapping:
-            formatted_name_for_link = clean_name.replace(" ", "")
-            bot_link = f"https://telegram.me/{BOT_USERNAME}?start=getfile-{formatted_name_for_link}"
-        else:
-            formatted_name_for_link = clean_name.replace(" ", "")
-            first_ep = episode_str.split('-')[0]
-            bot_link = f"https://telegram.me/{BOT_USERNAME}?start=getfile-{formatted_name_for_link}-S{season}E{first_ep}"
-
-        # ക്യാപ്ഷൻ ഫോർമാറ്റ്
-        caption = (
-            f"📁 **File Name :** {clean_name}\n"
-            f"🎞️ **Season :** {season}\n"
-            f"📌 **Episode :** {episode_str}\n"
-            f"🎬 **Quality :** {quality}"
-        )
-
-        reply_markup = InlineKeyboardMarkup(
-            [[InlineKeyboardButton("📥 Get File", url=bot_link)]]
-        )
-
-        BANNER_PHOTO = "https://ibb.co/cS5zrTGD"
-
-        try:
-            await client.send_photo(
-                chat_id=AUTH_CHANNEL,
-                photo=BANNER_PHOTO,
-                caption=caption,
-                reply_markup=reply_markup,
-                parse_mode="markdown"
-            )
-        except Exception as e:
-            print(f"Send Error: {e}")
-
-@Client.on_message(filters.chat(CHANNELS) & (filters.document | filters.video))
-async def auto_post_formatter(client, message):
-    try:
-        if message.document:
-            file_name_raw = message.document.file_name
-        elif message.video:
-            file_name_raw = message.video.file_name or "Media File"
-        else:
-            return
-
-        # സീസൺ കണ്ടെത്തുന്നു
-        season_match = re.search(r'(?:s|season\s*)(\d+)', file_name_raw, re.IGNORECASE)
-        season = season_match.group(1).zfill(2) if season_match else "01"
-
-        # ഫയൽ നാമത്തിലുള്ള എപ്പിസോഡ് നമ്പറുകൾ കണ്ടെത്തുന്നു
-        episodes_found = re.findall(r'(?:e|episode\s*)?(\d+)', file_name_raw, re.IGNORECASE)
-        valid_eps = []
-        for ep in episodes_found:
-            if len(ep) <= 4 and int(ep) < 5000:
-                valid_eps.append(int(ep))
-
-        # സീസൺ നമ്പർ ഒഴിവാക്കി ബാക്കിയുള്ളവ എപ്പിസോഡ് ആയി പരിഗണിക്കുന്നു
-        file_eps = [e for e in valid_eps if e != int(season)]
-        if not file_eps and valid_eps:
-            file_eps = valid_eps
-
-        # ക്വാളിറ്റി കണ്ടെത്തുന്നു
-        quality_match = re.search(r'(\d{3,4}p)', file_name_raw, re.IGNORECASE)
-        quality = quality_match.group(1) if quality_match else "N/A"
-
-        # സീരിയൽ പേര് മാപ്പിംഗ് ലിസ്റ്റിൽ ഉണ്ടോ എന്ന് നോക്കുന്നു
-        clean_name = None
-        lower_file_name = file_name_raw.lower()
-        sorted_serials = sorted(SERIALS_MAPPING.keys(), key=len, reverse=True)
-        
-        is_from_mapping = False
-        for key in sorted_serials:
-            normalized_key = key.replace("_", " ").lower()
-            if normalized_key in lower_file_name or key in lower_file_name:
-                clean_name = SERIALS_MAPPING[key]
-                is_from_mapping = True
+    get_file_url = None
+    if matched_key:
+        clean_matched_key = matched_key.replace("_", "").replace("-", "").lower()
+        for link in GET_FILE_LINKS:
+            clean_link = link.replace("-", "").replace("_", "").lower()
+            if clean_matched_key in clean_link:
+                get_file_url = link
                 break
+    
+    if not get_file_url:
+        encoded_title = quote(detected_serial)
+        get_file_url = f"https://telegram.me/Anujith1_bot?start=getfile-{encoded_title}"
 
-        if not clean_name:
-            temp_name = re.sub(r's\d+|season\s*\d+|e\d+|episode\s*\d+|\d{3,4}p|web-dl|hdtv|mkv|mp4|hevc', '', file_name_raw, flags=re.IGNORECASE)
-            clean_name = temp_name.replace('.', ' ').replace('_', ' ').strip()
-            if not clean_name:
-                clean_name = "Malayalam Serial"
+    keyboard = [[InlineKeyboardButton("📥 Get File", url=get_file_url)]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
 
-        serial_key = clean_name.lower()
+    banner_url = "https://ibb.co/cS5zrTGD"
 
-        if serial_key not in batch_storage:
-            batch_storage[serial_key] = []
-
-        # ഈ ഫയലിൽ കിട്ടിയ എപ്പിസോഡുകൾ സ്റ്റോറേജിലേക്ക് ചേർക്കുന്നു
-        batch_storage[serial_key].append({
-            "file_name": file_name_raw,
-            "season": season,
-            "quality": quality,
-            "clean_name": clean_name,
-            "is_from_mapping": is_from_mapping,
-            "all_eps": file_eps
-        })
-
-        # ബാച്ച് പ്രോസസ്സിing ടൈമർ മാനേജ് ചെയ്യുക
-        if serial_key in batch_timers:
-            batch_timers[serial_key].cancel()
-        
-        batch_timers[serial_key] = asyncio.create_task(process_batch(client, serial_key))
-
+    try:
+        await client.send_photo(
+            chat_id=AUTH_CHANNEL,
+            photo=banner_url,
+            caption=caption_text,
+            parse_mode="html",
+            reply_markup=reply_markup
+        )
     except Exception as e:
-        print(f"Auto-Formatter Error: {e}")
+        print(f"Error sending to Update Channel: {e}")
