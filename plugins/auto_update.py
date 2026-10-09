@@ -3,10 +3,10 @@ import re
 from urllib.parse import quote
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+from info import CHANNELS  # നിങ്ങളുടെ info.py-ൽ നിന്നുള്ള ചാനൽ ലിസ്റ്റ് എടുക്കുന്നു
 
-# --- ചാനൽ ഐഡികൾ (നിങ്ങളുടെ ആവശ്യപ്രകാരം മാറ്റുകയോ info.py-ൽ നിന്ന് എടുക്കുകയോ ചെയ്യാം) ---
-CHANNELS = -1003911112940  # Database Channel
-UPDATE_CHANNEL_ID = -1003926879089    # Update Channel
+# --- അപ്ഡേറ്റ് ചാനൽ ഐഡി ---
+UPDATE_CHANNEL_ID = -1003926879089    # മൂവി/സീരിയൽ അപ്ഡേറ്റ് ചാനൽ ഐഡി
 
 # --- മുഴുവൻ സീരിയൽ മാപ്പിംഗും ---
 SERIALS_MAPPING = {
