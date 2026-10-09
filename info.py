@@ -97,8 +97,8 @@ MULTI_FSUB = [int(channel_id) for channel_id in environ.get('MULTI_FSUB', '-1003
 # ============================
 # Payment Configuration
 # ============================
-QR_CODE = environ.get('QR_CODE', 'https://graph.org/file/e419f8018c2ee3db0fc.jpg')
-OWNER_UPI_ID = environ.get('OWNER_UPI_ID', '@Anujith1238')
+QR_CODE = environ.get('QR_CODE', 'https://ibb.co/xtr2Bb71')
+OWNER_UPI_ID = environ.get('OWNER_UPI_ID', 'vijayalakshmik8825@ybl')
 
 # ============================
 # MongoDB Configuration
@@ -244,7 +244,7 @@ MAX_B_TN = environ.get("MAX_B_TN", "10")
 MAX_BTN = is_enabled((environ.get('MAX_BTN', "True")), True)
 PORT = environ.get("PORT", "8080")
 MSG_ALRT = environ.get('MSG_ALRT', 'Share & Support Us ♥️')
-SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/')  # Support group link (make sure bot is admin)
+SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/AllMalayalamSupportGroup')  # Support group link (make sure bot is admin)
 P_TTI_SHOW_OFF = is_enabled((environ.get('P_TTI_SHOW_OFF', "False")), False)
 TMDB_POSTER = is_enabled(environ.get('TMDB_POSTER', 'True'), True)
 TMDB_BACKDROP = is_enabled(environ.get('TMDB_BACKDROP', 'True'), True)
