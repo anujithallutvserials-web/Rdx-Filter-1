@@ -93,7 +93,7 @@ async def _private_start_markup(user_id=None):
     buttons = [
         [
             InlineKeyboardButton(
-                '➕ ADD RDX BOT TO GROUP',
+                '➕ ADD Anujith ALLU TV SERIALS BOT TO GROUP',
                 url=f'https://t.me/{temp.U_NAME}?startgroup=true',
             )
         ],
@@ -102,7 +102,7 @@ async def _private_start_markup(user_id=None):
             InlineKeyboardButton('📖 HELP', callback_data='help'),
         ],
         [
-            InlineKeyboardButton('⚜️ ABOUT RDX', callback_data='about'),
+            InlineKeyboardButton('⚜️ ABOUT ALLU TV SERIALS', callback_data='about'),
             InlineKeyboardButton('💎 PREMIUM', callback_data="premium_info"),
         ],
     ]
@@ -268,9 +268,9 @@ async def start(client, message):
         await message.react(emoji=random.choice(REACTIONS), big=True) 
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         buttons = [[
-                    InlineKeyboardButton('➕ ADD RDX BOT TO GROUP', url=f'https://t.me/{temp.U_NAME}?startgroup=true')
+                    InlineKeyboardButton('➕ ADD Anujith ALLU TV SERIALS BOT TO GROUP', url=f'https://t.me/{temp.U_NAME}?startgroup=true')
                 ],[
-                    InlineKeyboardButton('⚜️ RDX MOVIE HD ⚜️', url=CHNL_LNK)
+                    InlineKeyboardButton('⚜️ ALLU TV SERIALS MOVIE HD ⚜️', url=CHNL_LNK)
                   ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply(script.GSTART_TXT.format(message.from_user.mention if message.from_user else message.chat.title, temp.U_NAME, temp.B_NAME), reply_markup=reply_markup, disable_web_page_preview=True)
@@ -371,12 +371,9 @@ async def start(client, message):
                 reply_markup = InlineKeyboardMarkup(btn)
                 caption = (
                     f"👋 Hello {message.from_user.mention}\n\n"
-                    "You have not joined all our *Updates Channels* yet.\n"
-                    "Please click the *Join Updates Channels* buttons below and ensure that you join *all* the listed channels.\n"
+                    "You have not joined all our Updates Channels yet.\n"
+                    "Please click the Join Updates Channels buttons below and ensure that you join all the listed channels.\n"
                     "After that, please try again.\n\n"
-                    "आपने हमारे *सभी Updates Channels* को जॉइन नहीं किया है।\n"
-                    "कृपया *Join Updates Channels* बटन पर क्लिक करें और सुनिश्चित करें कि आपने *सभी चैनल्स* को जॉइन किया है।\n"
-                    "इसके बाद, कृपया फिर से प्रयास करें।"
                 )
                 await message.reply_photo(
                     photo=random.choice(FSUB_PICS),
