@@ -174,9 +174,9 @@ LANGUAGE_ALIASES = {
 # ============================
 # Verification Settings
 # ============================
-VERIFY = is_enabled(environ.get('VERIFY', 'True'),True)
+VERIFY = is_enabled(environ.get('VERIFY', 'False'), False)
 VERIFY_ACCESS_HOURS = int(
-    environ.get('VERIFY_ACCESS_HOURS', environ.get('DEENDAYAL_VERIFY_EXPIRE', '24'))
+    environ.get('VERIFY_ACCESS_HOURS', environ.get('24'))
 )
 DEENDAYAL_VERIFY_EXPIRE = VERIFY_ACCESS_HOURS  # Backward-compatible setting name
 VERIFY_TOKEN_MINUTES = int(environ.get('VERIFY_TOKEN_MINUTES', '15'))
