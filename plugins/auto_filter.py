@@ -273,24 +273,81 @@ def get_episode(filename):
 
 
 # ==========================================
-# GET VIDEO QUALITY FROM FILENAME ONLY
+# GET VIDEO QUALITY AUTOMATICALLY
+# QUALITY FIX
 # ==========================================
 
 def get_quality(filename, message=None):
-    match = re.search(QUALITY_PATTERN, filename, re.IGNORECASE)
-    if match:
-        return f"{match.group(1)}p"
-    
+
+    # 1. Try to get the actual video dimensions.
+    # Works when Telegram provides width and height.
+
+    media = None
+
+    if message:
+        if message.video:
+            media = message.video
+        elif message.document:
+            mime_type = message.document.mime_type or ""
+
+            if mime_type.startswith("video/"):
+                media = message.document
+
+    if media:
+        width = getattr(media, "width", None) or 0
+        height = getattr(media, "height", None) or 0
+
+        if width > 0 and height > 0:
+            resolution = max(width, height)
+
+            if resolution >= 2160:
+                return "2160p"
+            elif resolution >= 1440:
+                return "1440p"
+            elif resolution >= 1080:
+                return "1080p"
+            elif resolution >= 720:
+                return "720p"
+            elif resolution >= 576:
+                return "576p"
+            elif resolution >= 480:
+                return "480p"
+            elif resolution >= 360:
+                return "360p"
+            elif resolution >= 240:
+                return "240p"
+            else:
+                return f"{resolution}p"
+
+    # 2. If dimensions are unavailable, inspect filename.
+    # Automatically detects 720p, 1080p, 480p, 360p,
+    # 280p, 180p, and other three/four-digit p labels.
+
+    matches = re.findall(
+        QUALITY_PATTERN,
+        filename,
+        re.IGNORECASE
+    )
+
+    if matches:
+        return f"{matches[0]}p"
+
+    # 3. Alternative quality labels.
+
     normalized = filename.lower()
+
     if re.search(r"(?<!\w)4k(?!\w)", normalized):
         return "4K"
+
     if re.search(r"(?<!\w)fhd(?!\w)", normalized):
         return "FHD"
+
     if re.search(r"(?<!\w)hd(?!\w)", normalized):
         return "HD"
+
     if re.search(r"(?<!\w)sd(?!\w)", normalized):
         return "SD"
-        
+
     return "N/A"
 
 
@@ -343,7 +400,7 @@ async def auto_post_formatter(client, message):
         season = get_season(filename)
         episode = get_episode(filename)
 
-        # Quality — fetched directly from filename
+        # Quality — fixed to use video dimensions first
         quality = get_quality(filename, message)
 
         caption = (
