@@ -29,7 +29,7 @@ SERIALS_LIST = [
     "swayamavarapanthal", "mangalyam thanthunanena"
 ]
 
-@Client.on_message(filters.text & ~filters.private)
+@Client.on_message(filters.text & ~filters.private, group=-1)
 async def serial_restriction_handler(client, message):
     if message.chat.id != SUPPORT_GROUP_ID:
         return
@@ -48,18 +48,18 @@ async def serial_restriction_handler(client, message):
             f"@Anujith1238 , @Arunya18</b>"
         )
         await message.reply_text(reply_text)
-        return
+        return message.stop_propagation()
 
     # 2. GM / Good Morning / Good Night / Good Evening handler
     if "good morning" in text or text == "gm":
         await message.reply_text(f"<b>Good Morning, {user_name} 🌅 Have a wonderful day ahead! 🥰</b>")
-        return
+        return message.stop_propagation()
     elif "good night" in text:
         await message.reply_text(f"<b>Good Night, {user_name} 🌙 Sweet dreams! ✨</b>")
-        return
+        return message.stop_propagation()
     elif "good evening" in text:
         await message.reply_text(f"<b>Good Evening, {user_name} 🌆 Hope you had a great day! 👍</b>")
-        return
+        return message.stop_propagation()
 
     # 3. Urgent / Help handler
     urgent_keywords = ["urgent", "help", "emergency", "support"]
@@ -73,7 +73,7 @@ async def serial_restriction_handler(client, message):
             f"ALLU Team ✅</b>"
         )
         await message.reply_text(reply_text)
-        return
+        return message.stop_propagation()
 
     # 4. Today/Yesterday episodes or channels handler
     if any(keyword in text for keyword in CHANNEL_KEYWORDS):
@@ -83,9 +83,9 @@ async def serial_restriction_handler(client, message):
             "Waiting until then... 🥰</b>"
         )
         await message.reply_text(reply_text)
-        return
+        return message.stop_propagation()
 
-    # 5. Serials list handler (Inline Button രൂപത്തിൽ ഗ്രൂപ്പ് ലിങ്ക് നൽകിയിരിക്കുന്നു)
+    # 5. Serials list handler
     if any(serial in text for serial in SERIALS_LIST):
         reply_text = (
             f"<b>Hello {user_name},\n\n"
@@ -93,9 +93,9 @@ async def serial_restriction_handler(client, message):
             f"If you want serials, please ask in the group below: 👇</b>"
         )
         
-        # താഴെ ഇൻലൈൻ ബട്ടൺ നൽകിയിരിക്കുന്നു
         buttons = InlineKeyboardMarkup([
             [InlineKeyboardButton("👉 Click Here To Join Group 👈", url="https://t.me/AlluTvSerialGroup")]
         ])
         
         await message.reply_text(reply_text, reply_markup=buttons)
+        return message.stop_propagation()
