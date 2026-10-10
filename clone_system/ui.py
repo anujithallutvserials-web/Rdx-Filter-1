@@ -1,4 +1,4 @@
-"""English RDX clone messages and inline keyboard layouts."""
+"""English ALLU TV SERIAL clone messages and inline keyboard layouts."""
 
 import html
 
