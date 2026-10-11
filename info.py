@@ -60,16 +60,16 @@ START_ANIMATION_STYLE = environ.get("START_ANIMATION_STYLE", "cinema").strip().l
 # ============================
 # Admin, Channels & Users Configuration
 # ============================
-ADMINS = parse_id_list(environ.get('ADMINS', '7273878841')) # Replace with the actual admin ID(s) to add
-CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '-1003243048523 -1002739310563').split()]  # Channel id for auto indexing (make sure bot is admin)
-LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1002356425836'))  # Log channel id (make sure bot is admin)
-BIN_CHANNEL = int(environ.get('BIN_CHANNEL', '-1004411706616'))  # Bin channel id (make sure bot is admin)
+ADMINS = parse_id_list(environ.get('ADMINS', '1727225499')) # Replace with the actual admin ID(s) to add
+CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '-1002015288592').split()]  # Channel id for auto indexing (make sure bot is admin)
+LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1002047197980'))  # Log channel id (make sure bot is admin)
+BIN_CHANNEL = int(environ.get('BIN_CHANNEL', '-1002047197980'))  # Bin channel id (make sure bot is admin)
 DEENDAYAL_MOVIE_UPDATE_CHANNEL = int(environ.get('DEENDAYAL_MOVIE_UPDATE_CHANNEL', '-1003268904349'))  # Notification of those who verify will be sent to your channel
-PREMIUM_LOGS = int(environ.get('PREMIUM_LOGS', '-1004411706616'))  # Premium logs channel id
+PREMIUM_LOGS = int(environ.get('PREMIUM_LOGS', '-1002047197980'))  # Premium logs channel id
 auth_channel = environ.get('AUTH_CHANNEL', '-1002356425836')  # Channel/Group ID for force sub (make sure bot is admin)
 DELETE_CHANNELS = [int(dch) if id_pattern.search(dch) else dch for dch in environ.get('DELETE_CHANNELS', '').split()]
 support_chat_id = environ.get('SUPPORT_CHAT_ID', '')  # Support group id (make sure bot is admin)
-reqst_channel = environ.get('REQST_CHANNEL_ID', '-1002356425836')  # Request channel id (make sure bot is admin)
+reqst_channel = environ.get('REQST_CHANNEL_ID', '')  # Request channel id (make sure bot is admin)
 AUTH_CHANNEL = [int(fch) if id_pattern.search(fch) else fch for fch in environ.get('AUTH_CHANNEL', '').split()]
 MULTI_FSUB = [int(channel_id) for channel_id in environ.get('MULTI_FSUB', '-1003131101681').split() if re.match(r'^-?\d+$', channel_id)]  # Channel for force sub (make sure bot is admin)
 
@@ -164,8 +164,8 @@ VERIFY_NOTICE_DELETE_SECONDS = int(environ.get('VERIFY_NOTICE_DELETE_SECONDS', '
 VERIFY_TIMEZONE = environ.get('VERIFY_TIMEZONE', 'Asia/Kolkata')
 VERIFY_POSTER = environ.get('VERIFY_POSTER', 'https://graph.org/file/c213a7752d698c28223da-062adb9b9133cc3a88.jpg')
 VERIFIED_POSTER = environ.get('VERIFIED_POSTER', 'https://graph.org/file/7b23c5bd460c2d3c212a0-d68e5116cf1f23d450.jpg')
-DEENDAYAL_VERIFIED_LOG = int(environ.get('DEENDAYAL_VERIFIED_LOG', '-1004411706616'))  # Log channel id (make sure bot is admin)
-HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', 'https://t.me/+VBxO70jO1YzY0')  # How to open tutorial link for verification
+DEENDAYAL_VERIFIED_LOG = int(environ.get('DEENDAYAL_VERIFIED_LOG', '-1002047197980'))  # Log channel id (make sure bot is admin)
+HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', 'https://t.me/How_or_Open_Link')  # How to open tutorial link for verification
 
 # ============================
 # Anti-Bypass Configuration
@@ -178,8 +178,8 @@ ANTI_BYPASS_REQUEST_TIMEOUT = int(environ.get('ANTI_BYPASS_REQUEST_TIMEOUT', '20
 # Link Shortener Configuration
 # ============================
 IS_SHORTLINK = bool(environ.get('IS_SHORTLINK', True))
-SHORTLINK_URL = environ.get('SHORTLINK_URL', 'shortxlinks.com')
-SHORTLINK_API = environ.get('SHORTLINK_API', '')
+SHORTLINK_URL = environ.get('SHORTLINK_URL', 'linkshortify.com')
+SHORTLINK_API = environ.get('SHORTLINK_API', '927f420bfcbeda36287288f7e98110467feedbef')
 TUTORIAL = environ.get('TUTORIAL', 'https://t.me/+O70jODFs1YzY0')  # Tutorial video link for opening shortlink website
 IS_TUTORIAL = bool(environ.get('IS_TUTORIAL', False))
 
@@ -190,7 +190,7 @@ GRP_LNK = MOVIE_GROUP_LINK
 CHNL_LNK = UPDATE_CHANNEL_LINK
 OWNER_LNK = OWNER_LINK
 DEENDAYAL_MOVIE_UPDATE_CHANNEL_LNK = MOVIE_UPDATE_LINK
-OWNERID = int(os.environ.get('OWNERID', '7273878841'))  # Replace with the actual admin ID
+OWNERID = int(os.environ.get('OWNERID', '1727225499'))  # Replace with the actual admin ID
 
 # Ensure OWNERID retains access to admin-only commands even when ADMINS is not configured.
 if OWNERID not in ADMINS:
