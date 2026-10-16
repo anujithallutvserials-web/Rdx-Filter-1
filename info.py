@@ -174,18 +174,15 @@ LANGUAGE_ALIASES = {
 # ============================
 # Verification Settings
 # ============================
-VERIFY = is_enabled(environ.get('VERIFY', 'False'), False)
-VERIFY_ACCESS_HOURS = int(
-    environ.get('VERIFY_ACCESS_HOURS', environ.get('DEENDAYAL_VERIFY_EXPIRE', '24'))
-)
-DEENDAYAL_VERIFY_EXPIRE = VERIFY_ACCESS_HOURS  # Backward-compatible setting name
-VERIFY_TOKEN_MINUTES = int(environ.get('VERIFY_TOKEN_MINUTES', '15'))
+VERIFY = bool(environ.get('VERIFY', True))  # Verification On (True) / Off (False)
+VERIFY_EXPIRE = int(environ.get('VERIFY_EXPIRE', 24))  # Add time in hours
+ERIFY_TOKEN_MINUTES = int(environ.get('VERIFY_TOKEN_MINUTES', '15'))
 VERIFY_NOTICE_DELETE_SECONDS = int(environ.get('VERIFY_NOTICE_DELETE_SECONDS', '180'))
-VERIFY_TIMEZONE = environ.get('VERIFY_TIMEZONE', 'Asia/Kolkata')
 VERIFY_POSTER = environ.get('VERIFY_POSTER', 'https://files.catbox.moe/wa48jg.jpg')
 VERIFIED_POSTER = environ.get('VERIFIED_POSTER', 'https://files.catbox.moe/5xnn38.jpg')
-DEENDAYAL_VERIFIED_LOG = int(environ.get('DEENDAYAL_VERIFIED_LOG', '-1003976172346'))  # Log channel id (make sure bot is admin)
+VERIFIED_LOG = int(environ.get('VERIFIED_LOG', '-1002047197980'))  # Log channel id (make sure bot is admin)
 HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', 'https://t.me/How_or_Open_Link')  # How to open tutorial link for verification
+# ============================
 
 # ============================
 # Anti-Bypass Configuration
@@ -197,11 +194,11 @@ ANTI_BYPASS_REQUEST_TIMEOUT = int(environ.get('ANTI_BYPASS_REQUEST_TIMEOUT', '20
 # ============================
 # Link Shortener Configuration
 # ============================
-IS_SHORTLINK = bool(environ.get('IS_SHORTLINK', True))
+IS_SHORTLINK = bool(environ.get('IS_SHORTLINK', False))
 SHORTLINK_URL = environ.get('SHORTLINK_URL', 'linkshortify.com')
 SHORTLINK_API = environ.get('SHORTLINK_API', '927f420bfcbeda36287288f7e98110467feedbef')
 TUTORIAL = environ.get('TUTORIAL', 'https://t.me/How_or_Open_Link')  # Tutorial video link for opening shortlink website
-IS_TUTORIAL = bool(environ.get('IS_TUTORIAL', False))
+IS_TUTORIAL = bool(environ.get('IS_TUTORIAL', True))
 
 # ============================
 # Channel & Group Links Configuration
