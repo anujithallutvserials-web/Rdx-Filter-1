@@ -177,7 +177,7 @@ ANTI_BYPASS_REQUEST_TIMEOUT = int(environ.get('ANTI_BYPASS_REQUEST_TIMEOUT', '20
 # ============================
 # Link Shortener Configuration
 # ============================
-IS_SHORTLINK = bool(environ.get('IS_SHORTLINK', True))
+IS_SHORTLINK = bool(environ.get('IS_SHORTLINK', False))
 SHORTLINK_URL = environ.get('SHORTLINK_URL', 'linkshortify.com')
 SHORTLINK_API = environ.get('SHORTLINK_API', '927f420bfcbeda36287288f7e98110467feedbef')
 TUTORIAL = environ.get('TUTORIAL', 'https://t.me/+O70jODFs1YzY0')  # Tutorial video link for opening shortlink website
